@@ -2,7 +2,10 @@ package com.sneha.employee_management_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 
 @Entity
@@ -18,20 +21,29 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
 
-    @Column(nullable = false)
-    private String firstName;
+   @NotBlank(message = "First name is required")
+@Column(nullable = false)
+private String firstName;
 
-    @Column(nullable = false)
-    private String lastName;
+@NotBlank(message = "Last name is required")
+@Column(nullable = false)
+private String lastName;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+@NotBlank(message = "Email is required")
+@Email(message = "Please enter a valid email")
+@Column(unique = true, nullable = false)
+private String email;
 
-    private String phoneNumber;
+@NotBlank(message = "Phone number is required")
+private String phoneNumber;
 
-    private String department;
+@NotBlank(message = "Department is required")
+private String department;
 
-    private Double salary;
+@NotNull(message = "Salary is required")
+@Positive(message = "Salary must be greater than 0")
+private Double salary;
 
-    private LocalDate joiningDate;
+@NotNull(message = "Joining date is required")
+private LocalDate joiningDate;
 }

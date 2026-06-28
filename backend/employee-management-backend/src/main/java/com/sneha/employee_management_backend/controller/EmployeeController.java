@@ -5,7 +5,10 @@ import com.sneha.employee_management_backend.entity.Employee;
 import com.sneha.employee_management_backend.service.EmployeeService;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,28 +30,41 @@ public class EmployeeController {
 
     // Add Employee
     @PostMapping
-    public Employee saveEmployee(@RequestBody Employee employee) {
-        return employeeService.saveEmployee(employee);
-    }
+public ResponseEntity<Employee> saveEmployee(@Valid @RequestBody Employee employee) {
+
+    Employee savedEmployee = employeeService.saveEmployee(employee);
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+                         .body(savedEmployee);
+}
 
     // Get All Employees
     @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeService.getAllEmployees();
-    }
-    @GetMapping("/{id}")
-    public Employee getEmployeeById(@PathVariable Long id) {
-    return employeeService.getEmployeeById(id);
-}
-    @PutMapping("/{id}")
-public Employee updateEmployee(@PathVariable Long id,
-                               @RequestBody Employee employee) {
+public ResponseEntity<List<Employee>> getAllEmployees() {
 
-    return employeeService.updateEmployee(id, employee);
+    return ResponseEntity.ok(employeeService.getAllEmployees());
+}
+    @GetMapping("/{id}")
+public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
+
+    Employee employee = employeeService.getEmployeeById(id);
+
+    return ResponseEntity.ok(employee);
+}
+   @PutMapping("/{id}")
+public ResponseEntity<Employee> updateEmployee(
+        @PathVariable Long id,
+        @Valid @RequestBody Employee employee) {
+
+    Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+
+    return ResponseEntity.ok(updatedEmployee);
 }
 @DeleteMapping("/{id}")
-public String deleteEmployee(@PathVariable Long id) {
+public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+
     employeeService.deleteEmployee(id);
-    return "Employee deleted successfully!";
+
+    return ResponseEntity.noContent().build();
 }
 }

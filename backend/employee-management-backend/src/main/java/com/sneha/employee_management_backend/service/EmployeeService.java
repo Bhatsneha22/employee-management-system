@@ -2,6 +2,7 @@ package com.sneha.employee_management_backend.service;
 
 
 import com.sneha.employee_management_backend.entity.Employee;
+import com.sneha.employee_management_backend.exception.EmployeeNotFoundException;
 import com.sneha.employee_management_backend.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,28 +25,29 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
     public Employee getEmployeeById(Long id) {
-    return employeeRepository.findById(id).orElse(null);
+
+    return employeeRepository.findById(id)
+            .orElseThrow(() -> new EmployeeNotFoundException(id));
 }
-    public Employee updateEmployee(Long id, Employee updatedEmployee) {
+public Employee updateEmployee(Long id, Employee updatedEmployee) {
 
-    Employee employee = employeeRepository.findById(id).orElse(null);
+    Employee existingEmployee = employeeRepository.findById(id)
+            .orElseThrow(() -> new EmployeeNotFoundException(id));
 
-    if (employee != null) {
+    existingEmployee.setFirstName(updatedEmployee.getFirstName());
+    existingEmployee.setLastName(updatedEmployee.getLastName());
+    existingEmployee.setEmail(updatedEmployee.getEmail());
+    existingEmployee.setPhoneNumber(updatedEmployee.getPhoneNumber());
+    existingEmployee.setDepartment(updatedEmployee.getDepartment());
+    existingEmployee.setSalary(updatedEmployee.getSalary());
+    existingEmployee.setJoiningDate(updatedEmployee.getJoiningDate());
 
-        employee.setFirstName(updatedEmployee.getFirstName());
-        employee.setLastName(updatedEmployee.getLastName());
-        employee.setEmail(updatedEmployee.getEmail());
-        employee.setPhoneNumber(updatedEmployee.getPhoneNumber());
-        employee.setDepartment(updatedEmployee.getDepartment());
-        employee.setSalary(updatedEmployee.getSalary());
-        employee.setJoiningDate(updatedEmployee.getJoiningDate());
-
-        return employeeRepository.save(employee);
-    }
-
-    return null;
+    return employeeRepository.save(existingEmployee);
 }
 public void deleteEmployee(Long id) {
-    employeeRepository.deleteById(id);
+   Employee employee = employeeRepository.findById(id)
+        .orElseThrow(() -> new EmployeeNotFoundException(id));
+
+employeeRepository.delete(employee);
 }
 }
