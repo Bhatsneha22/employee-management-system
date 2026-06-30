@@ -12,7 +12,7 @@ import com.sneha.employee_management_backend.entity.User;
 import com.sneha.employee_management_backend.repository.UserRepository;
 import com.sneha.employee_management_backend.security.CustomUserDetailsService;
 import com.sneha.employee_management_backend.security.JwtService;
-
+import com.sneha.employee_management_backend.entity.Role;
 @Service
 public class AuthService {
 
@@ -67,7 +67,11 @@ public AuthResponse login(LoginRequest request) {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         // Default role
-        user.setRole("USER");
+        if (request.getRole() == null) {
+    user.setRole(Role.USER);
+} else {
+    user.setRole(request.getRole());
+}
 
         userRepository.save(user);
 

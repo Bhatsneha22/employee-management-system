@@ -8,6 +8,10 @@ import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 @Service
 public class JwtService {
 
@@ -15,9 +19,9 @@ public class JwtService {
     private static final String SECRET_KEY =
             "mysecretkeymysecretkeymysecretkey12";
 
-    private Key getSignInKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-    }
+    private SecretKey getSignInKey() {
+    return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+}
 
     public String generateToken(String username) {
 
@@ -28,4 +32,20 @@ public class JwtService {
                 .signWith(getSignInKey())
                 .compact();
     }
+    public String extractUsername(String token) {
+
+    Claims claims = Jwts.parser()
+            .verifyWith(getSignInKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
+
+    return claims.getSubject();
+}
+public boolean isTokenValid(String token, String username) {
+
+    String extractedUsername = extractUsername(token);
+
+    return extractedUsername.equals(username);
+}
 }
