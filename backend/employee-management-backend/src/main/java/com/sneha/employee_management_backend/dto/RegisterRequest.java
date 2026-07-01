@@ -18,7 +18,7 @@ public class RegisterRequest {
     private String password;
     
     @NotNull(message = "Role is required")
-private Role role;
+    private Role role;
     // Getters and Setters
 
     public String getUsername() {

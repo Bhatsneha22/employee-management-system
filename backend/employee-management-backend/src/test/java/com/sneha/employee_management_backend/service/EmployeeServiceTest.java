@@ -1,5 +1,6 @@
 package com.sneha.employee_management_backend.service;
 
+import java.util.Collections;
 import com.sneha.employee_management_backend.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,16 +13,11 @@ import com.sneha.employee_management_backend.dto.EmployeeResponse;
 import com.sneha.employee_management_backend.entity.Employee;
 import com.sneha.employee_management_backend.exception.EmployeeNotFoundException;
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-import java.time.LocalDate;
 public class EmployeeServiceTest {
 
 	@Test
@@ -176,7 +172,45 @@ void deleteEmployeeTest() {
     verify(employeeRepository, times(1)).findById(1L);
     verify(employeeRepository, times(1)).delete(employee);
 }
+@Test
+void getAllEmployeesEmptyTest() {
 
+    when(employeeRepository.findAll())
+            .thenReturn(Collections.emptyList());
+
+    var employees = employeeService.getAllEmployees();
+
+    assertNotNull(employees);
+    assertTrue(employees.isEmpty());
+
+    verify(employeeRepository).findAll();
+}
+@Test
+void deleteEmployeeNotFoundTest() {
+
+    when(employeeRepository.findById(100L))
+            .thenReturn(Optional.empty());
+
+    assertThrows(EmployeeNotFoundException.class,
+            () -> employeeService.deleteEmployee(100L));
+
+    verify(employeeRepository).findById(100L);
+}
+@Test
+void updateEmployeeNotFoundTest() {
+
+    CreateEmployeeRequest request = new CreateEmployeeRequest();
+
+    request.setFirstName("Test");
+
+    when(employeeRepository.findById(100L))
+            .thenReturn(Optional.empty());
+
+    assertThrows(EmployeeNotFoundException.class,
+            () -> employeeService.updateEmployee(100L, request));
+
+    verify(employeeRepository).findById(100L);
+}
 @Mock
     private EmployeeRepository employeeRepository;
 
